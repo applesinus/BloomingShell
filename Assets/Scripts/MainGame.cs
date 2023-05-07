@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class MainGame : MonoBehaviour
 {
     public int lang; // lang 0: English, 1: Russian
+    float red, green, blue; // rgb of turtle eyes
 
     // task is a class for tasks
     class Task
@@ -204,6 +205,9 @@ public class MainGame : MonoBehaviour
     {
         plot[currentLevel].level[currentTurtle].Create();
         mode = 2;
+        red = 0f;
+        green = 0f;
+        blue = 0f;
     }
 
     // Update is called once per frame
@@ -244,6 +248,10 @@ public class MainGame : MonoBehaviour
                     {
                         turtle.transform.localPosition = new Vector3(0, 0, 150);
                         gameObject.transform.parent.Find("Smile").gameObject.SetActive(false);
+                        for (int emoji = 0; emoji < 4; emoji++)
+                        {
+                            gameObject.transform.parent.Find("Smile").Find("smile" + emoji.ToString()).gameObject.SetActive(false);
+                        }
                         mode = 0;
                     }
                     break;
@@ -253,11 +261,10 @@ public class MainGame : MonoBehaviour
             // and cheching the progress
             case 3:
                 {
-                    float red=0f, green=0f, blue=0f;
                     GameObject flower = turtle.transform.Find("Sprites").Find("Tflower").gameObject;
                     if (!flower.activeInHierarchy)
                     {
-                        // Excwptions
+                        // Exceptions
                         if (PlayerPrefs.GetInt("Shell1") == 0) PlayerPrefs.SetInt("Shell1", 8);
                         if (PlayerPrefs.GetInt("Shell4") == 0) PlayerPrefs.SetInt("Shell4", 8);
                         if (PlayerPrefs.GetInt("Shell7") == 0) PlayerPrefs.SetInt("Shell7", 8);
@@ -293,22 +300,22 @@ public class MainGame : MonoBehaviour
                                 if (plot[currentLevel].level[currentTurtle].tasks[i].mode == 1) {
                                     for (int neighbour = 0; neighbour < 6; neighbour++)
                                     {
-                                        if (turtlemain.neighbour[0, i, neighbour] != -1) {
+                                        if (turtlemain.neighbour[0, shell-1, neighbour] != -1) {
                                             int needed1 = plot[currentLevel].level[currentTurtle].tasks[i].flowers[0];
                                             int needed2 = plot[currentLevel].level[currentTurtle].tasks[i].flowers[1];
                                             if (
                                                 (
                                                 needed1 == PlayerPrefs.GetInt("Shell" + shell.ToString())
                                                 &&
-                                                needed2 == PlayerPrefs.GetInt("Shell" + turtlemain.neighbour[0, i, neighbour].ToString())
+                                                needed2 == PlayerPrefs.GetInt("Shell" + turtlemain.neighbour[0, shell-1, neighbour].ToString())
                                                 )
                                                 ||
                                                 (
                                                 needed2 == PlayerPrefs.GetInt("Shell" + shell.ToString())
                                                 &&
-                                                needed1 == PlayerPrefs.GetInt("Shell" + turtlemain.neighbour[0, i, neighbour].ToString())
+                                                needed1 == PlayerPrefs.GetInt("Shell" + turtlemain.neighbour[0, shell-1, neighbour].ToString())
                                                 )
-                                                ) { done[i] = 1; }
+                                               ) { done[i] = 1; }
                                         }
                                     }
                                 }
@@ -320,27 +327,42 @@ public class MainGame : MonoBehaviour
                             if (done[i] == 1) tasksdone++;
                         }
 
+                        
                         if (
-                            (red / 255f - plot[currentLevel].level[currentTurtle].eyes.r > -0.01f && red / 255f - plot[currentLevel].level[currentTurtle].eyes.r < 0.01f)
-                            ||
-                            (green / 255f - plot[currentLevel].level[currentTurtle].eyes.g > -0.01f && green / 255f - plot[currentLevel].level[currentTurtle].eyes.g < 0.01f)
-                            ||
-                            (blue / 255f - plot[currentLevel].level[currentTurtle].eyes.b > -0.01f && blue / 255f - plot[currentLevel].level[currentTurtle].eyes.b < 0.01f)
+                            (red * 255 - plot[currentLevel].level[currentTurtle].eyes.r > -0.01f && red * 255 - plot[currentLevel].level[currentTurtle].eyes.r < 0.01f)
+                            &&
+                            (green * 255 - plot[currentLevel].level[currentTurtle].eyes.g > -0.01f && green * 255 - plot[currentLevel].level[currentTurtle].eyes.g < 0.01f)
+                            &&
+                            (blue * 255 - plot[currentLevel].level[currentTurtle].eyes.b > -0.01f && blue * 255 - plot[currentLevel].level[currentTurtle].eyes.b < 0.01f)
                             )
                         {
-                            Debug.Log("Color");
+
                             if (tasksdone == tasksCount) { smile = 3; } else { smile = 2; }
                         }
                         else
                         {
-                            if (tasksdone == 0) { smile = 0; }
-                            else if (tasksCount - tasksdone <= tasksCount / 2) { smile = 1; }
-                            else { smile = 2; }
+                            if (tasksdone == 0)
+                            {
+                                smile = 0;
+                            }
+                            else
+                            {
+                                if (tasksCount - tasksdone >= tasksCount / 2)
+                                {
+                                    smile = 1;
+                                }
+                                else
+                                {
+                                    smile = 2;
+                                }
+                            }
                         }
+
 
                         Debug.Log(smile);
 
                         gameObject.transform.parent.Find("Smile").gameObject.SetActive(true);
+                        gameObject.transform.parent.Find("Smile").Find("smile" + smile.ToString()).gameObject.SetActive(true);
                         SmileFade.mode = 1;
                         mode = 1;
                     }
