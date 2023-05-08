@@ -5,7 +5,25 @@ using UnityEngine.SceneManagement;
 
 public class Buttons : MonoBehaviour
 {
-    
+    //string updateMode = "none";
+    enum updateModes
+    {
+        None,
+        SettingsScrollUp,
+        SettingsScrollDown,
+        AboutScrollDown,
+        AboutScrollUp
+    }
+    updateModes updateMode = updateModes.None;
+
+    Transform screen;
+    int frame = 1;
+
+    float animationsSpeed = 0.2f;
+    float animationsAcceleration = 1.05f;
+
+
+
     private void OnMouseDown()
     {
         gameObject.transform.localScale = new Vector3(85, 85, 85);
@@ -27,6 +45,8 @@ public class Buttons : MonoBehaviour
             case ("SettingsButton"):
                 {
                     Debug.Log("Settings button is clicked");
+                    updateMode = updateModes.SettingsScrollUp;
+                    frame = 0;
                     break;
                 }
 
@@ -34,7 +54,7 @@ public class Buttons : MonoBehaviour
             // Menu LangButton
             case ("LangButton"):
                 {
-                    Debug.Log("Settings button is clicked");
+                    Debug.Log("Lang button is clicked");
                     break;
                 }
 
@@ -54,15 +74,48 @@ public class Buttons : MonoBehaviour
         }
     }
 
+
+    void scrollSomeScreen(Transform chosenScreen, Vector3 move, float speed=1, float acceleration=1, int frame=1)
+    {
+        chosenScreen.localPosition += move * speed * (acceleration * frame);
+    }
+
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        screen = gameObject.transform.parent.parent;
     }
 
     // Update is called once per frame
     void Update()
     {
+        switch(updateMode)
+        {
+            case updateModes.SettingsScrollUp:
+                {
 
+                    frame++;
+                    if (screen.localPosition.y + (animationsSpeed*animationsAcceleration*frame) <= -1080)
+                    {
+                        screen.localPosition = new Vector3(0, -1080, 0);
+                        frame = 0;
+                        updateMode = updateModes.None;
+                    } else
+                    {
+                        scrollSomeScreen(screen, Vector3.down, animationsSpeed, animationsAcceleration, frame);
+                    }
+                    break;
+                }
+
+
+            case updateModes.None:
+                    break;
+
+            default:
+                break;
+        }
+
+        
     }
 }

@@ -26,7 +26,6 @@ public class MainGame : MonoBehaviour
     public int currentLevel; // number of current level
 
 
-
     // tasks is a class for a single turtle
     class Turtle
     {
@@ -56,6 +55,35 @@ public class MainGame : MonoBehaviour
     public GameObject turtle9;
     GameObject turtle;
     public SmileFade SmileFade;
+    Dictionary<string, GameObject> turtleparts; // parts of a turtle. t = tail, h = head, lfp = left front paw, rfp = right front paw, lbp = left back paw, rbp = right back paw.
+    float partsposition = 0;
+    bool isgoingup = false;
+
+    
+    void turtleAnimation()
+    {
+        if (partsposition < -10.0f)
+        {
+            isgoingup = true;
+        } else if (partsposition > 10.0f)
+        {
+            isgoingup = false;
+        }
+
+        if (isgoingup)
+        {
+            partsposition += Time.deltaTime * 25;
+        } else
+        {
+            partsposition -= Time.deltaTime * 25;
+        }
+        turtleparts["h"].transform.Rotate(Vector3.forward * partsposition / 90);
+        turtleparts["t"].transform.Rotate(Vector3.forward * partsposition / -90);
+        turtleparts["lfp"].transform.Rotate(Vector3.forward * partsposition / -70);
+        turtleparts["lbp"].transform.Rotate(Vector3.forward * partsposition / 90);
+        turtleparts["rfp"].transform.Rotate(Vector3.forward * partsposition / 70);
+        turtleparts["rbp"].transform.Rotate(Vector3.forward * partsposition / -90);
+    }
 
 
 
@@ -81,6 +109,17 @@ public class MainGame : MonoBehaviour
         newTurtle.transform.name = "Turtle";
         newTurtle.transform.Find("Sprites").Find("Thead").Find("Teyes").GetComponent<SpriteRenderer>().color = plot[currentLevel].level[currentTurtle].eyes;
         turtle = newTurtle;
+
+        turtleparts = new Dictionary<string, GameObject>()
+        {
+            {"t", turtle.transform.Find("Sprites").Find("Ttail").gameObject },
+            {"h", turtle.transform.Find("Sprites").Find("Thead").gameObject },
+            {"lfp", turtle.transform.Find("Sprites").Find("TpawFL").gameObject },
+            {"rfp", turtle.transform.Find("Sprites").Find("TpawFR").gameObject },
+            {"lbp", turtle.transform.Find("Sprites").Find("TpawBL").gameObject },
+            {"rbp", turtle.transform.Find("Sprites").Find("TpawBR").gameObject },
+        };
+
         mode = 2;
 
         // Task cards appearing
@@ -218,10 +257,13 @@ public class MainGame : MonoBehaviour
             case 0:
                 break;
 
-            // creating turtle
+            // going away and destroy
+            // then creating turtle
             case 1:
                 {
                     turtle.transform.position = turtle.transform.position + Vector3.up * Time.deltaTime * 3;
+                    turtleAnimation();
+
                     if (turtle.transform.localPosition.y > 1080)
                     {
                         GameObject tasksfield = gameObject.transform.parent.Find("Tasks").gameObject;
@@ -244,6 +286,8 @@ public class MainGame : MonoBehaviour
             case 2:
                 {
                     turtle.transform.position = turtle.transform.position + Vector3.up * Time.deltaTime * 3;
+                    turtleAnimation();
+
                     if (turtle.transform.localPosition.y >= 0)
                     {
                         turtle.transform.localPosition = new Vector3(0, 0, 150);
@@ -261,7 +305,7 @@ public class MainGame : MonoBehaviour
             // and cheching the progress
             case 3:
                 {
-                    GameObject flower = turtle.transform.Find("Sprites").Find("Tflower").gameObject;
+                    GameObject flower = turtle.transform.Find("Sprites").Find("Thead").Find("Tflower").gameObject;
                     if (!flower.activeInHierarchy)
                     {
                         // Exceptions
@@ -276,9 +320,9 @@ public class MainGame : MonoBehaviour
                         flower.transform.Find("TflowerColor").GetComponent<SpriteRenderer>().color = flowercolor;
                         flower.SetActive(true);
                     }
-                    flower.transform.localScale = flower.transform.localScale + new Vector3(1, 1, 0) * Time.deltaTime * 30;
+                    flower.transform.localScale = flower.transform.localScale + new Vector3(0.01f, 0.01f, 0) * Time.deltaTime * 30;
 
-                    if (flower.transform.localScale.x >= 100)
+                    if (flower.transform.localScale.x >= 1)
                     {
                         int tasksCount = plot[currentLevel].level[currentTurtle].tasks.Length;
                         int[] done = new int[tasksCount];
@@ -365,6 +409,7 @@ public class MainGame : MonoBehaviour
                         gameObject.transform.parent.Find("Smile").Find("smile" + smile.ToString()).gameObject.SetActive(true);
                         SmileFade.mode = 1;
                         mode = 1;
+                        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     }
                     break;
                 }
