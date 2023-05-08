@@ -79,7 +79,7 @@ public class MainGame : MonoBehaviour
         newTurtle.transform.localScale = new Vector3(1, 1, 1);
         newTurtle.transform.localPosition = new Vector3(0, -1080, 150);
         newTurtle.transform.name = "Turtle";
-        newTurtle.transform.Find("Sprites").Find("Teyes").GetComponent<SpriteRenderer>().material.SetColor("_Color", plot[currentLevel].level[currentTurtle].eyes);
+        newTurtle.transform.Find("Sprites").Find("Thead").Find("Teyes").GetComponent<SpriteRenderer>().color = plot[currentLevel].level[currentTurtle].eyes;
         turtle = newTurtle;
         mode = 2;
 
@@ -273,7 +273,7 @@ public class MainGame : MonoBehaviour
                         green = (colors[PlayerPrefs.GetInt("Shell1") - 1, 1] + colors[PlayerPrefs.GetInt("Shell4") - 1, 1] + colors[PlayerPrefs.GetInt("Shell7") - 1, 1]) / 3.0f / 255;
                         blue = (colors[PlayerPrefs.GetInt("Shell1") - 1, 2] + colors[PlayerPrefs.GetInt("Shell4") - 1, 2] + colors[PlayerPrefs.GetInt("Shell7") - 1, 2]) / 3.0f / 255;
                         Color flowercolor = new Color (red, green, blue, 1.0f);
-                        flower.transform.Find("TflowerColor").GetComponent<SpriteRenderer>().material.SetColor("_Color", flowercolor);
+                        flower.transform.Find("TflowerColor").GetComponent<SpriteRenderer>().color = flowercolor;
                         flower.SetActive(true);
                     }
                     flower.transform.localScale = flower.transform.localScale + new Vector3(1, 1, 0) * Time.deltaTime * 30;

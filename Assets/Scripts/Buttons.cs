@@ -44,6 +44,7 @@ public class Buttons : MonoBehaviour
                 {
                     Debug.Log("Play button is clicked");
                     PlayerPrefs.SetInt("color", 0);
+                    
                     SceneManager.LoadScene("Game");
                     break;
                 }
@@ -62,6 +63,6 @@ public class Buttons : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
