@@ -247,6 +247,8 @@ public class MainGame : MonoBehaviour
         red = 0f;
         green = 0f;
         blue = 0f;
+
+        lang = PlayerPrefs.GetInt("lang");
     }
 
     // Update is called once per frame
