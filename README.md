@@ -11,8 +11,6 @@ Orange team isn't even an organisation, it's literally a team of two people. We 
 
 If you're an HR and wanna look at my code, PLEASE GET OUT OF HERE! In this project it's terrible, I know. Please, take a look at my other projects!
 
-
-
 Update log:
 
 ===== 2023.05.09 =====
