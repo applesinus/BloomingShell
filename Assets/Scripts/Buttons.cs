@@ -54,11 +54,11 @@ public class Buttons : MonoBehaviour
 
             if (PlayerPrefs.GetInt("sound") == 0)
             {
-                return "Звук\nВКЛ.";
+                return "Звук:\nВКЛ";
             }
             else
             {
-                return "Звук\nВЫКЛ.";
+                return "Звук:\nВЫКЛ";
             }
         } else
         {
@@ -81,22 +81,120 @@ public class Buttons : MonoBehaviour
             return "Here is an error, please message @dapelsin on Telegram about it";
         }
     }
-    
-    
+
+    private string aboutTextOperator(string window)
+    {
+        switch (window)
+        {
+            case ("AboutTitle"):
+                {
+                    if (PlayerPrefs.GetInt("lang") == 0)
+                    {
+                        return "About the game";
+                    }
+                    else if (PlayerPrefs.GetInt("lang") == 1)
+                    {
+                        return "Об игре";
+                    }
+                    else
+                    {
+                        return "Here is an error, please message @dapelsin on Telegram about it";
+                    }
+                }
+
+            case ("CreditsApelsin4ik"):
+                {
+                    if (PlayerPrefs.GetInt("lang") == 0)
+                    {
+                        return "Code:\nApelsin4ik\n\nLinks:";
+                    }
+                    else if (PlayerPrefs.GetInt("lang") == 1)
+                    {
+                        return "Код:\nApelsin4ik\n\nСсылки:";
+                    }
+                    else
+                    {
+                        return "Here is an error, please message @dapelsin on Telegram about it";
+                    }
+                }
+
+            case ("CreditsOrangeTeam"):
+                {
+                    if (PlayerPrefs.GetInt("lang") == 0)
+                    {
+                        return "Made by\nOrange team\n\nLinks:";
+                    }
+                    else if (PlayerPrefs.GetInt("lang") == 1)
+                    {
+                        return "Создано командой\nOrange team\n\nСсылки:";
+                    }
+                    else
+                    {
+                        return "Here is an error, please message @dapelsin on Telegram about it";
+                    }
+                }
+
+            case ("CreditsPieLina"):
+                {
+                    if (PlayerPrefs.GetInt("lang") == 0)
+                    {
+                        return "Desing:\npie_lina\n\nLinks:";
+                    }
+                    else if (PlayerPrefs.GetInt("lang") == 1)
+                    {
+                        return "Дизайн:\npie_lina\n\nСсылки:";
+                    }
+                    else
+                    {
+                        return "Here is an error, please message @dapelsin on Telegram about it";
+                    }
+                }
+
+            default:
+                return "Here is an error, please message @dapelsin on Telegram about it";
+        }
+    }
+
     private string titleSettingsTextOperator()
     {
         if (PlayerPrefs.GetInt("lang") == 0)
         {
-            return "Settings";
+            return "\nSettings";
         }
         else if (PlayerPrefs.GetInt("lang") == 1)
         {
-            return "Настройки";
+            return "\nНастройки";
         }
         else
         {
             return "Here is an error, please message @dapelsin on Telegram about it";
         }
+    }
+
+    private void changeLanguage()
+    {
+        Text[] texts = new Text[]
+        {
+            gameObject.transform.parent.Find("SettingsTitle").gameObject.GetComponent<Text>(),
+            gameObject.transform.parent.Find("SettingsTitle").Find("LangText").gameObject.GetComponent<Text>(),
+            gameObject.transform.parent.Find("SettingsTitle").Find("SoundText").gameObject.GetComponent<Text>(),
+            gameObject.transform.parent.Find("AboutTitle").gameObject.GetComponent<Text>(),
+            gameObject.transform.parent.Find("AboutTitle").Find("CreditsApelsin4ik").gameObject.GetComponent<Text>(),
+            gameObject.transform.parent.Find("AboutTitle").Find("CreditsOrangeTeam").gameObject.GetComponent<Text>(),
+            gameObject.transform.parent.Find("AboutTitle").Find("CreditsPieLina").gameObject.GetComponent<Text>(),
+        };
+
+        string[] strings = new string[]
+        {
+            titleSettingsTextOperator(),
+            langTextOperator(),
+            soundTextOperator(),
+            aboutTextOperator("AboutTitle"),
+            aboutTextOperator("CreditsApelsin4ik"),
+            aboutTextOperator("CreditsOrangeTeam"),
+            aboutTextOperator("CreditsPieLina"),
+        };
+        changeTexts(texts, strings);
     }
 
 
@@ -112,16 +210,38 @@ public class Buttons : MonoBehaviour
         Debug.Log("Button " + gameObject.name + " is clicked!");
         switch(gameObject.name)
         {
-            // Menu AboutButton
-            case ("AboutButton"): {
-                    break;
-                }
 
 
             // Menu SettingsButton
             case ("SettingsButton"):
                 {
                     updateMode = updateModes.SettingsScrollUp;
+                    frame = 0;
+                    break;
+                }
+
+            // Menu SettingsBackButton
+            case ("SettingsBackButton"):
+                {
+                    updateMode = updateModes.SettingsScrollDown;
+                    frame = 0;
+                    break;
+                }
+
+
+
+            // Menu AboutButton
+            case ("AboutButton"):
+                {
+                    updateMode = updateModes.AboutScrollDown;
+                    frame = 0;
+                    break;
+                }
+
+            // Menu AboutBackButton
+            case ("AboutBackButton"):
+                {
+                    updateMode = updateModes.AboutScrollUp;
                     frame = 0;
                     break;
                 }
@@ -139,10 +259,7 @@ public class Buttons : MonoBehaviour
                         PlayerPrefs.SetInt("lang", 0);
                     }
 
-                    Text titleSettingsText = gameObject.transform.parent.Find("SettingsTitle").gameObject.GetComponent<Text>();
-                    Text langText = gameObject.transform.parent.Find("SettingsTitle").Find("LangText").gameObject.GetComponent<Text>();
-                    Text soundText = gameObject.transform.parent.Find("SettingsTitle").Find("SoundText").gameObject.GetComponent<Text>();
-                    changeTexts(new Text[] { langText, soundText, titleSettingsText }, new string[] { langTextOperator(), soundTextOperator(), titleSettingsTextOperator() } );
+                    changeLanguage();
 
                     gameObject.GetComponent<SpriteRenderer>().sprite = sprites[PlayerPrefs.GetInt("lang")];
                     break;
@@ -224,14 +341,10 @@ public class Buttons : MonoBehaviour
 
         switch(gameObject.name)
         {
+            // SettingsButton sets all texts according to settings
             case ("SettingsButton"):
                 {
-                    // SettingsButton sets all texts according to settings
-                    Text titleSettingsText = gameObject.transform.parent.Find("SettingsTitle").gameObject.GetComponent<Text>();
-                    Text langText = gameObject.transform.parent.Find("SettingsTitle").Find("LangText").gameObject.GetComponent<Text>();
-                    Text soundText = gameObject.transform.parent.Find("SettingsTitle").Find("SoundText").gameObject.GetComponent<Text>();
-
-                    changeTexts(new Text[] { titleSettingsText, langText, soundText }, new string[] { titleSettingsTextOperator(), langTextOperator(), soundTextOperator() });
+                    changeLanguage();
 
                     break;
                 }
@@ -260,14 +373,69 @@ public class Buttons : MonoBehaviour
         {
             case updateModes.SettingsScrollUp:
                 {
-
+                    gameObject.transform.parent.Find("Blocker").gameObject.SetActive(true);
                     frame++;
                     if (screen.localPosition.y + (animationsSpeed*animationsAcceleration*frame) <= -1080)
                     {
                         screen.localPosition = new Vector3(0, -1080, 0);
                         frame = 0;
                         updateMode = updateModes.None;
+                        gameObject.transform.parent.Find("Blocker").gameObject.SetActive(false);
                     } else
+                    {
+                        scrollSomeScreen(screen, Vector3.down, animationsSpeed, animationsAcceleration, frame);
+                    }
+                    break;
+                }
+
+            case updateModes.SettingsScrollDown:
+                {
+                    gameObject.transform.parent.Find("Blocker").gameObject.SetActive(true);
+                    frame++;
+                    if (screen.localPosition.y - (animationsSpeed * animationsAcceleration * frame) >= 0)
+                    {
+                        screen.localPosition = new Vector3(0, 0, 0);
+                        frame = 0;
+                        updateMode = updateModes.None;
+                        gameObject.transform.parent.Find("Blocker").gameObject.SetActive(false);
+                    }
+                    else
+                    {
+                        scrollSomeScreen(screen, Vector3.up, animationsSpeed, animationsAcceleration, frame);
+                    }
+                    break;
+                }
+
+            case updateModes.AboutScrollDown:
+                {
+                    gameObject.transform.parent.Find("Blocker").gameObject.SetActive(true);
+                    frame++;
+                    if (screen.localPosition.y - (animationsSpeed * animationsAcceleration * frame) >= 1080)
+                    {
+                        screen.localPosition = new Vector3(0, 1080, 0);
+                        frame = 0;
+                        updateMode = updateModes.None;
+                        gameObject.transform.parent.Find("Blocker").gameObject.SetActive(false);
+                    }
+                    else
+                    {
+                        scrollSomeScreen(screen, Vector3.up, animationsSpeed, animationsAcceleration, frame);
+                    }
+                    break;
+                }
+
+            case updateModes.AboutScrollUp:
+                {
+                    gameObject.transform.parent.Find("Blocker").gameObject.SetActive(true);
+                    frame++;
+                    if (screen.localPosition.y + (animationsSpeed * animationsAcceleration * frame) <= 0)
+                    {
+                        screen.localPosition = new Vector3(0, 0, 0);
+                        frame = 0;
+                        updateMode = updateModes.None;
+                        gameObject.transform.parent.Find("Blocker").gameObject.SetActive(false);
+                    }
+                    else
                     {
                         scrollSomeScreen(screen, Vector3.down, animationsSpeed, animationsAcceleration, frame);
                     }

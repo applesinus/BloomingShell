@@ -1904,7 +1904,7 @@ GameObject:
   - component: {fileID: 860066580}
   - component: {fileID: 860066579}
   m_Layer: 0
-  m_Name: SettingsButton
+  m_Name: gameSettingsButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1937,6 +1937,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0ad193bcd28a044eb592a312e2dd0ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sprites: []
 --- !u!61 &860066580
 BoxCollider2D:
   m_ObjectHideFlags: 0
