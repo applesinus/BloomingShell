@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+
 public class Buttons : MonoBehaviour
 {
     public Sprite[] sprites;
@@ -22,6 +23,7 @@ public class Buttons : MonoBehaviour
     updateModes updateMode = updateModes.None;
 
     Transform screen;
+    float timer = 0;
     int frame = 1;
 
     float animationsSpeed = 0.01f;
@@ -198,6 +200,17 @@ public class Buttons : MonoBehaviour
     }
 
 
+    private void screenAnimation(Transform obj, Vector3 targetPosition, float timer)
+    {
+        obj.localPosition = Vector3.Lerp(obj.localPosition, targetPosition, easeInOutCubic(timer/3));
+    }
+
+    private float easeInOutCubic(float timer)
+    {
+        return timer < 0.5 ? 8 * timer * timer * timer * timer : 1 - Mathf.Pow(-2 * timer + 2, 4) / 2;
+    }
+
+
 
     private void OnMouseDown()
     {
@@ -301,12 +314,6 @@ public class Buttons : MonoBehaviour
     }
 
 
-    void scrollSomeScreen(Transform chosenScreen, Vector3 move, float speed=1, float acceleration=1, int frame=1)
-    {
-        chosenScreen.localPosition += move * speed * (acceleration * frame);
-    }
-
-
 
     private void Awake()
     {
@@ -374,16 +381,14 @@ public class Buttons : MonoBehaviour
             case updateModes.SettingsScrollUp:
                 {
                     gameObject.transform.parent.Find("Blocker").gameObject.SetActive(true);
-                    frame++;
+                    timer += Time.deltaTime;
+                    screenAnimation(screen, new Vector3(0, -1080, 0), timer);
+
                     if (screen.localPosition.y + (animationsSpeed*animationsAcceleration*frame) <= -1080)
                     {
-                        screen.localPosition = new Vector3(0, -1080, 0);
-                        frame = 0;
+                        timer = 0f;
                         updateMode = updateModes.None;
                         gameObject.transform.parent.Find("Blocker").gameObject.SetActive(false);
-                    } else
-                    {
-                        scrollSomeScreen(screen, Vector3.down, animationsSpeed, animationsAcceleration, frame);
                     }
                     break;
                 }
@@ -391,17 +396,14 @@ public class Buttons : MonoBehaviour
             case updateModes.SettingsScrollDown:
                 {
                     gameObject.transform.parent.Find("Blocker").gameObject.SetActive(true);
-                    frame++;
-                    if (screen.localPosition.y - (animationsSpeed * animationsAcceleration * frame) >= 0)
+                    timer += Time.deltaTime;
+                    screenAnimation(screen, new Vector3(0, 0, 0), timer);
+
+                    if (screen.localPosition.y + (animationsSpeed * animationsAcceleration * frame) >= 0)
                     {
-                        screen.localPosition = new Vector3(0, 0, 0);
-                        frame = 0;
+                        timer = 0f;
                         updateMode = updateModes.None;
                         gameObject.transform.parent.Find("Blocker").gameObject.SetActive(false);
-                    }
-                    else
-                    {
-                        scrollSomeScreen(screen, Vector3.up, animationsSpeed, animationsAcceleration, frame);
                     }
                     break;
                 }
@@ -409,17 +411,14 @@ public class Buttons : MonoBehaviour
             case updateModes.AboutScrollDown:
                 {
                     gameObject.transform.parent.Find("Blocker").gameObject.SetActive(true);
-                    frame++;
-                    if (screen.localPosition.y - (animationsSpeed * animationsAcceleration * frame) >= 1080)
+                    timer += Time.deltaTime;
+                    screenAnimation(screen, new Vector3(0, 1080, 0), timer);
+
+                    if (screen.localPosition.y + (animationsSpeed * animationsAcceleration * frame) >= 1080)
                     {
-                        screen.localPosition = new Vector3(0, 1080, 0);
-                        frame = 0;
+                        timer = 0f;
                         updateMode = updateModes.None;
                         gameObject.transform.parent.Find("Blocker").gameObject.SetActive(false);
-                    }
-                    else
-                    {
-                        scrollSomeScreen(screen, Vector3.up, animationsSpeed, animationsAcceleration, frame);
                     }
                     break;
                 }
@@ -427,17 +426,14 @@ public class Buttons : MonoBehaviour
             case updateModes.AboutScrollUp:
                 {
                     gameObject.transform.parent.Find("Blocker").gameObject.SetActive(true);
-                    frame++;
+                    timer += Time.deltaTime;
+                    screenAnimation(screen, new Vector3(0, 0, 0), timer);
+
                     if (screen.localPosition.y + (animationsSpeed * animationsAcceleration * frame) <= 0)
                     {
-                        screen.localPosition = new Vector3(0, 0, 0);
-                        frame = 0;
+                        timer = 0f;
                         updateMode = updateModes.None;
                         gameObject.transform.parent.Find("Blocker").gameObject.SetActive(false);
-                    }
-                    else
-                    {
-                        scrollSomeScreen(screen, Vector3.down, animationsSpeed, animationsAcceleration, frame);
                     }
                     break;
                 }

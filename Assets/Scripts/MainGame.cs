@@ -58,11 +58,12 @@ public class MainGame : MonoBehaviour
     Dictionary<string, GameObject> turtleparts; // parts of a turtle. t = tail, h = head, lfp = left front paw, rfp = right front paw, lbp = left back paw, rbp = right back paw.
     float partsposition = 0;
     bool isgoingup = false;
+    float timer = 0f;
 
     
     void turtleAnimation()
     {
-        if (partsposition < -10.0f)
+        /*if (partsposition < -10.0f)
         {
             isgoingup = true;
         } else if (partsposition > 10.0f)
@@ -76,13 +77,46 @@ public class MainGame : MonoBehaviour
         } else
         {
             partsposition -= Time.deltaTime * 25;
+        }*/
+
+        timer += Time.deltaTime;
+        if (timer >= 1f)
+        {
+            isgoingup = !isgoingup;
+            timer = 0;
         }
-        turtleparts["h"].transform.Rotate(Vector3.forward * partsposition / 90);
+
+        if (isgoingup)
+        {
+            turtleparts["h"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(-10f, Vector3.forward), Quaternion.AngleAxis(10f, Vector3.forward), easingFunction(timer));
+            turtleparts["t"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(10f, Vector3.forward), Quaternion.AngleAxis(-10f, Vector3.forward), easingFunction(timer));
+            turtleparts["lfp"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(20f, Vector3.forward), Quaternion.AngleAxis(-20f, Vector3.forward), easingFunction(timer));
+            turtleparts["rfp"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(-20f, Vector3.forward), Quaternion.AngleAxis(20f, Vector3.forward), easingFunction(timer));
+            turtleparts["lbp"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(15f, Vector3.forward), Quaternion.AngleAxis(-15f, Vector3.forward), easingFunction(timer));
+            turtleparts["rbp"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(-15f, Vector3.forward), Quaternion.AngleAxis(15f, Vector3.forward), easingFunction(timer));
+        }
+        else
+        {
+            turtleparts["h"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(10f, Vector3.forward), Quaternion.AngleAxis(-10f, Vector3.forward), easingFunction(timer));
+            turtleparts["t"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(-10f, Vector3.forward), Quaternion.AngleAxis(10f, Vector3.forward), easingFunction(timer));
+            turtleparts["lfp"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(-20f, Vector3.forward), Quaternion.AngleAxis(20f, Vector3.forward), easingFunction(timer));
+            turtleparts["rfp"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(20f, Vector3.forward), Quaternion.AngleAxis(-20f, Vector3.forward), easingFunction(timer));
+            turtleparts["lbp"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(-15f, Vector3.forward), Quaternion.AngleAxis(15f, Vector3.forward), easingFunction(timer));
+            turtleparts["rbp"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(15f, Vector3.forward), Quaternion.AngleAxis(-15f, Vector3.forward), easingFunction(timer));
+        }
+        //Debug.Log(isgoingup.ToString() + turtleparts["h"].transform.localRotation);
+
+        /*turtleparts["h"].transform.Rotate(Vector3.forward * partsposition / 90);
         turtleparts["t"].transform.Rotate(Vector3.forward * partsposition / -90);
         turtleparts["lfp"].transform.Rotate(Vector3.forward * partsposition / -70);
         turtleparts["lbp"].transform.Rotate(Vector3.forward * partsposition / 90);
         turtleparts["rfp"].transform.Rotate(Vector3.forward * partsposition / 70);
-        turtleparts["rbp"].transform.Rotate(Vector3.forward * partsposition / -90);
+        turtleparts["rbp"].transform.Rotate(Vector3.forward * partsposition / -90);*/
+    }
+
+    float easingFunction(float x)
+    {
+        return x < 0.5 ? 4 * x * x * x : 1 - Mathf.Pow(-2 * x + 2, 3) / 2;
     }
 
 
