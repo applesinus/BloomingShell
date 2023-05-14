@@ -59,26 +59,17 @@ public class MainGame : MonoBehaviour
     float partsposition = 0;
     bool isgoingup = false;
     float timer = 0f;
+    float standingByTimer = 0f;
+    private Vector3 startPosition;
 
-    
+
+    void turtleMove()
+    {
+        turtle.transform.localPosition = Vector3.Lerp(startPosition, startPosition + new Vector3(0, 300, 0), easingFunction(timer));
+    }
+
     void turtleAnimation()
     {
-        /*if (partsposition < -10.0f)
-        {
-            isgoingup = true;
-        } else if (partsposition > 10.0f)
-        {
-            isgoingup = false;
-        }
-
-        if (isgoingup)
-        {
-            partsposition += Time.deltaTime * 25;
-        } else
-        {
-            partsposition -= Time.deltaTime * 25;
-        }*/
-
         timer += Time.deltaTime;
         if (timer >= 1f)
         {
@@ -94,9 +85,11 @@ public class MainGame : MonoBehaviour
             turtleparts["rfp"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(-20f, Vector3.forward), Quaternion.AngleAxis(20f, Vector3.forward), easingFunction(timer));
             turtleparts["lbp"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(15f, Vector3.forward), Quaternion.AngleAxis(-15f, Vector3.forward), easingFunction(timer));
             turtleparts["rbp"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(-15f, Vector3.forward), Quaternion.AngleAxis(15f, Vector3.forward), easingFunction(timer));
+            startPosition = turtle.transform.localPosition;
         }
         else
         {
+            turtleMove();
             turtleparts["h"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(10f, Vector3.forward), Quaternion.AngleAxis(-10f, Vector3.forward), easingFunction(timer));
             turtleparts["t"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(-10f, Vector3.forward), Quaternion.AngleAxis(10f, Vector3.forward), easingFunction(timer));
             turtleparts["lfp"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(-20f, Vector3.forward), Quaternion.AngleAxis(20f, Vector3.forward), easingFunction(timer));
@@ -104,14 +97,26 @@ public class MainGame : MonoBehaviour
             turtleparts["lbp"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(-15f, Vector3.forward), Quaternion.AngleAxis(15f, Vector3.forward), easingFunction(timer));
             turtleparts["rbp"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(15f, Vector3.forward), Quaternion.AngleAxis(-15f, Vector3.forward), easingFunction(timer));
         }
-        //Debug.Log(isgoingup.ToString() + turtleparts["h"].transform.localRotation);
+    }
 
-        /*turtleparts["h"].transform.Rotate(Vector3.forward * partsposition / 90);
-        turtleparts["t"].transform.Rotate(Vector3.forward * partsposition / -90);
-        turtleparts["lfp"].transform.Rotate(Vector3.forward * partsposition / -70);
-        turtleparts["lbp"].transform.Rotate(Vector3.forward * partsposition / 90);
-        turtleparts["rfp"].transform.Rotate(Vector3.forward * partsposition / 70);
-        turtleparts["rbp"].transform.Rotate(Vector3.forward * partsposition / -90);*/
+    void turtleStandingByAnimation()
+    {
+        standingByTimer += Time.deltaTime;
+        float localTimer = standingByTimer % 60f;
+
+        if (localTimer > 5f)
+        {
+            if (localTimer < 10f)
+            {
+                Debug.Log(1);
+                turtleparts["h"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(-10f, Vector3.forward), Quaternion.AngleAxis(10f, Vector3.forward), localTimer / 10f);
+            }
+            else if (localTimer < 15f)
+            {
+                Debug.Log(2);
+                turtleparts["t"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(10f, Vector3.forward), Quaternion.AngleAxis(0, Vector3.forward), standingByTimer / 2);
+            }
+        }
     }
 
     float easingFunction(float x)
@@ -143,6 +148,7 @@ public class MainGame : MonoBehaviour
         newTurtle.transform.name = "Turtle";
         newTurtle.transform.Find("Sprites").Find("Thead").Find("Teyes").GetComponent<SpriteRenderer>().color = plot[currentLevel].level[currentTurtle].eyes;
         turtle = newTurtle;
+        startPosition = turtle.transform.localPosition;
 
         turtleparts = new Dictionary<string, GameObject>()
         {
@@ -162,7 +168,7 @@ public class MainGame : MonoBehaviour
         {
             GameObject card = tasksfield.transform.Find("TaskCard" + (i + 1).ToString()).gameObject;
             card.SetActive(true);
-            card.transform.Find("Text").GetComponent<Text>().text = plot[currentLevel].level[currentTurtle].tasks[i].description[0];
+            card.transform.Find("Text").GetComponent<Text>().text = plot[currentLevel].level[currentTurtle].tasks[i].description[PlayerPrefs.GetInt("lang")];
         }
         return;
     }
@@ -291,16 +297,19 @@ public class MainGame : MonoBehaviour
         switch(mode)
         {
             case 0:
+                if (turtle != null)
+                {
+                    turtleStandingByAnimation();
+                }
                 break;
 
             // going away and destroy
             // then creating turtle
             case 1:
                 {
-                    turtle.transform.position = turtle.transform.position + Vector3.up * Time.deltaTime * 3;
                     turtleAnimation();
 
-                    if (turtle.transform.localPosition.y > 1080)
+                    if (turtle.transform.localPosition.y > 1000)
                     {
                         GameObject tasksfield = gameObject.transform.parent.Find("Tasks").gameObject;
                         for (int i = 0; i < plot[currentLevel].level[currentTurtle].tasks.Length; i++)
@@ -321,7 +330,6 @@ public class MainGame : MonoBehaviour
             // deleting turtle
             case 2:
                 {
-                    turtle.transform.position = turtle.transform.position + Vector3.up * Time.deltaTime * 3;
                     turtleAnimation();
 
                     if (turtle.transform.localPosition.y >= 0)

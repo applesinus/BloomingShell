@@ -5,7 +5,7 @@ using UnityEngine;
 public class SmileFade : MonoBehaviour
 {
     public GameObject back, smile1, smile2, smile3, smile4, turtle;
-    int speed = 250;
+    int speed = 50;
     public int mode = 0; // 0: stand by, 1: in, 2: out;
 
     private void Awake()
