@@ -9,6 +9,7 @@ public class MainGame : MonoBehaviour
     float red, green, blue; // rgb of turtle eyes
 
     // task is a class for tasks
+    [System.Serializable]
     class Task
     {
         public int mode = 1; // mode (basic)1: neighbour, 2: mirror
@@ -20,17 +21,11 @@ public class MainGame : MonoBehaviour
     }
 
 
-
-    Level[] plot; // plot is the whole plot
-    public int currentTurtle; // number of current turtle
-    public int currentLevel; // number of current level
-
-
     // tasks is a class for a single turtle
+    [System.Serializable]
     class Turtle
     {
-        public Color eyes;
-        //public Vector3Int eyes;
+        public int[] eyes;
         public Task[] tasks; // list of tasks for this turtle
         public int turtle = 9; // number of shell parts
 
@@ -42,12 +37,31 @@ public class MainGame : MonoBehaviour
     }
 
 
-
     // level is a class for a list of turtles on a level
+    [System.Serializable]
     class Level
     {
-        public Turtle[] level;
+        public Turtle[] turtles;
     }
+
+
+    // AllGameLevels is a class for a list of all levels in the game, getting from JSON
+    [System.Serializable]
+    class AllGameLevels
+    {
+        public Level[] levels;
+    }
+
+
+    Color EyesToColor(int[] colorsArray)
+    {
+        return new Color(colorsArray[0] / 255f, colorsArray[1] / 255f, colorsArray[2] / 255f, colorsArray[3] / 255f);
+    }
+
+    public TextAsset LevelsDB;
+    AllGameLevels plot; // plot is the whole plot
+    public int currentTurtle; // number of current turtle
+    public int currentLevel; // number of current level
 
 
 
@@ -146,7 +160,7 @@ public class MainGame : MonoBehaviour
         newTurtle.transform.localScale = new Vector3(1, 1, 1);
         newTurtle.transform.localPosition = new Vector3(0, -1080, 150);
         newTurtle.transform.name = "Turtle";
-        newTurtle.transform.Find("Sprites").Find("Thead").Find("Teyes").GetComponent<SpriteRenderer>().color = plot[currentLevel].level[currentTurtle].eyes;
+        newTurtle.transform.Find("Sprites").Find("Thead").Find("Teyes").GetComponent<SpriteRenderer>().color = EyesToColor(plot.levels[currentLevel].turtles[currentTurtle].eyes);
         turtle = newTurtle;
         startPosition = turtle.transform.localPosition;
 
@@ -164,11 +178,11 @@ public class MainGame : MonoBehaviour
 
         // Task cards appearing
         GameObject tasksfield = gameObject.transform.parent.Find("Tasks").gameObject;
-        for (int i = 0; i < plot[currentLevel].level[currentTurtle].tasks.Length; i++)
+        for (int i = 0; i < plot.levels[currentLevel].turtles[currentTurtle].tasks.Length; i++)
         {
             GameObject card = tasksfield.transform.Find("TaskCard" + (i + 1).ToString()).gameObject;
             card.SetActive(true);
-            card.transform.Find("Text").GetComponent<Text>().text = plot[currentLevel].level[currentTurtle].tasks[i].description[PlayerPrefs.GetInt("lang")];
+            card.transform.Find("Text").GetComponent<Text>().text = plot.levels[currentLevel].turtles[currentTurtle].tasks[i].description[PlayerPrefs.GetInt("lang")];
         }
         return;
     }
@@ -201,7 +215,9 @@ public class MainGame : MonoBehaviour
 
         // This is a database of all levels and turtles
         // Plot is a whole sequense of levels
-        plot = new Level[1] {
+        plot = new AllGameLevels();
+        plot = JsonUtility.FromJson<AllGameLevels>(LevelsDB.text);
+        /*plot = new Level[1] {
 
             // First level
             new Level()
@@ -211,7 +227,7 @@ public class MainGame : MonoBehaviour
                     new Turtle
                     {
                         turtle = 9,
-                        eyes = new Color(255, 0, 0, 255),
+                        eyes = new int[4] {255, 0, 0, 255 },
                         tasks = new Task[2]
                         {
                             new Task
@@ -239,7 +255,7 @@ public class MainGame : MonoBehaviour
                     new Turtle
                     {
                         turtle = 9,
-                        eyes = new Color(0, 255, 0, 255),
+                        eyes = new int[4] {0, 255, 0, 255 },
                         tasks = new Task[1]
                         {
                             new Task
@@ -259,7 +275,7 @@ public class MainGame : MonoBehaviour
                     new Turtle
                     {
                         turtle = 9,
-                        eyes = new Color(0, 0, 0, 255),
+                        eyes = new int[4] {0, 0, 0, 255 },
                         tasks = new Task[1]
                         {
                             new Task
@@ -275,14 +291,15 @@ public class MainGame : MonoBehaviour
                     },
                 }
             }
-        }
+        }*/
         ;
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        plot[currentLevel].level[currentTurtle].Create();
+
+        plot.levels[currentLevel].turtles[currentTurtle].Create();
         mode = 2;
         red = 0f;
         green = 0f;
@@ -312,7 +329,7 @@ public class MainGame : MonoBehaviour
                     if (turtle.transform.localPosition.y > 1000)
                     {
                         GameObject tasksfield = gameObject.transform.parent.Find("Tasks").gameObject;
-                        for (int i = 0; i < plot[currentLevel].level[currentTurtle].tasks.Length; i++)
+                        for (int i = 0; i < plot.levels[currentLevel].turtles[currentTurtle].tasks.Length; i++)
                         {
                             GameObject card = tasksfield.transform.Find("TaskCard" + (i + 1).ToString()).gameObject;
                             card.SetActive(false);
@@ -322,7 +339,7 @@ public class MainGame : MonoBehaviour
                         SmileFade.mode = 2;
                         mode = 2;
                         currentTurtle++;
-                        plot[currentLevel].level[currentTurtle].Create();
+                        plot.levels[currentLevel].turtles[currentTurtle].Create();
                     }
                     break;
                 }
@@ -368,7 +385,7 @@ public class MainGame : MonoBehaviour
 
                     if (flower.transform.localScale.x >= 1)
                     {
-                        int tasksCount = plot[currentLevel].level[currentTurtle].tasks.Length;
+                        int tasksCount = plot.levels[currentLevel].turtles[currentTurtle].tasks.Length;
                         int[] done = new int[tasksCount];
 
                         int tasksdone = 0; // count of done tasks
@@ -383,14 +400,14 @@ public class MainGame : MonoBehaviour
                         for (int i = 0; i < tasksCount; i++)
                         {
                             done[i] = 0;
-                            for (int shell = 1; shell <= plot[currentLevel].level[currentTurtle].turtle; shell++)
+                            for (int shell = 1; shell <= plot.levels[currentLevel].turtles[currentTurtle].turtle; shell++)
                             {
-                                if (plot[currentLevel].level[currentTurtle].tasks[i].mode == 1) {
+                                if (plot.levels[currentLevel].turtles[currentTurtle].tasks[i].mode == 1) {
                                     for (int neighbour = 0; neighbour < 6; neighbour++)
                                     {
                                         if (turtlemain.neighbour[0, shell-1, neighbour] != -1) {
-                                            int needed1 = plot[currentLevel].level[currentTurtle].tasks[i].flowers[0];
-                                            int needed2 = plot[currentLevel].level[currentTurtle].tasks[i].flowers[1];
+                                            int needed1 = plot.levels[currentLevel].turtles[currentTurtle].tasks[i].flowers[0];
+                                            int needed2 = plot.levels[currentLevel].turtles[currentTurtle].tasks[i].flowers[1];
                                             if (
                                                 (
                                                 needed1 == PlayerPrefs.GetInt("Shell" + shell.ToString())
@@ -417,11 +434,11 @@ public class MainGame : MonoBehaviour
 
                         
                         if (
-                            (red * 255 - plot[currentLevel].level[currentTurtle].eyes.r > -0.01f && red * 255 - plot[currentLevel].level[currentTurtle].eyes.r < 0.01f)
+                            (red * 255 - EyesToColor(plot.levels[currentLevel].turtles[currentTurtle].eyes).r > -0.01f && red * 255 - EyesToColor(plot.levels[currentLevel].turtles[currentTurtle].eyes).r < 0.01f)
                             &&
-                            (green * 255 - plot[currentLevel].level[currentTurtle].eyes.g > -0.01f && green * 255 - plot[currentLevel].level[currentTurtle].eyes.g < 0.01f)
+                            (green * 255 - EyesToColor(plot.levels[currentLevel].turtles[currentTurtle].eyes).g > -0.01f && green * 255 - EyesToColor(plot.levels[currentLevel].turtles[currentTurtle].eyes).g < 0.01f)
                             &&
-                            (blue * 255 - plot[currentLevel].level[currentTurtle].eyes.b > -0.01f && blue * 255 - plot[currentLevel].level[currentTurtle].eyes.b < 0.01f)
+                            (blue * 255 - EyesToColor(plot.levels[currentLevel].turtles[currentTurtle].eyes).b > -0.01f && blue * 255 - EyesToColor(plot.levels[currentLevel].turtles[currentTurtle].eyes).b < 0.01f)
                             )
                         {
 

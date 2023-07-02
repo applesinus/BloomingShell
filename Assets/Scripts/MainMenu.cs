@@ -1,9 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
+    public TextAsset JSON;
+    public GameObject textfield;
+
+    [System.Serializable]
+    public class Player
+    {
+        public string pop;
+        public int kek;
+    }
+
+    [System.Serializable]
+    public class Playerlist
+    {
+        public Player[] player;
+    }
+
+    public Playerlist newplayerlist;
+
+
     float timer = 1.8f;
     bool initflowergrow = false;
     public GameObject[] flowerstages;
@@ -11,8 +31,14 @@ public class MainMenu : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-
         initflowergrow = true;
+    }
+
+    private void Start()
+    {
+        newplayerlist = new Playerlist();
+        newplayerlist = JsonUtility.FromJson<Playerlist>(JSON.text);
+        textfield.GetComponent<Text>().text = newplayerlist.player[1].kek.ToString();
     }
 
     // Update is called once per frame
