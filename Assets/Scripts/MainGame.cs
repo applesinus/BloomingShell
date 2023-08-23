@@ -158,7 +158,7 @@ public class MainGame : MonoBehaviour
         }
         newTurtle.transform.SetParent(gameObject.transform);
         newTurtle.transform.localScale = new Vector3(1, 1, 1);
-        newTurtle.transform.localPosition = new Vector3(0, -1080, 150);
+        newTurtle.transform.localPosition = new Vector3(0, -1080, 300);
         newTurtle.transform.name = "Turtle";
         newTurtle.transform.Find("Sprites").Find("Thead").Find("Teyes").GetComponent<SpriteRenderer>().color = EyesToColor(plot.levels[currentLevel].turtles[currentTurtle].eyes);
         turtle = newTurtle;
@@ -217,86 +217,12 @@ public class MainGame : MonoBehaviour
         // Plot is a whole sequense of levels
         plot = new AllGameLevels();
         plot = JsonUtility.FromJson<AllGameLevels>(LevelsDB.text);
-        /*plot = new Level[1] {
-
-            // First level
-            new Level()
-            {
-                level = new Turtle[3] {
-                    // turtle 1
-                    new Turtle
-                    {
-                        turtle = 9,
-                        eyes = new int[4] {255, 0, 0, 255 },
-                        tasks = new Task[2]
-                        {
-                            new Task
-                            {
-                                mode = 1,
-                                flowers = new int[2] {1, 1},
-                                description = new string[2] {
-                                    "Turtle wants two velvet flowers to be close to each other!",
-                                    "Черепашка хочет, чтобы два фиолетовых цветка были рядом!"
-                                },
-                            },
-                            new Task
-                            {
-                                mode = 1,
-                                flowers = new int[2] {6, 7},
-                                description = new string[2] {
-                                    "Turtle wants orange and blue flowers to be close to each other!",
-                                    "Черепашка хочет, чтобы оранжевый и синий цветки были рядом!"
-                                },
-                            }
-                        }
-                    },
-
-                    // turtle 2
-                    new Turtle
-                    {
-                        turtle = 9,
-                        eyes = new int[4] {0, 255, 0, 255 },
-                        tasks = new Task[1]
-                        {
-                            new Task
-                            {
-                                mode = 1,
-                                flowers = new int[2] {2, 2},
-                                description = new string[2] {
-                                    "Turtle wants two light blue flowers to be close to each other!",
-                                    "Черепашка хочет чтобы два голубых цветка были рядом!"
-                                },
-                            }
-                        }
-                    },
-
-
-                    // turtle 3
-                    new Turtle
-                    {
-                        turtle = 9,
-                        eyes = new int[4] {0, 0, 0, 255 },
-                        tasks = new Task[1]
-                        {
-                            new Task
-                            {
-                                mode = 1,
-                                flowers = new int[2] {2, 5},
-                                description = new string[2] {
-                                    "Turtle wants light blue and yellow flowers to be close to each other!",
-                                    "Черепашка хочет, чтобы голубой и жёлтый цветки были рядом!"
-                                },
-                            }
-                        }
-                    },
-                }
-            }
-        }*/
+        
         ;
     }
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
 
         plot.levels[currentLevel].turtles[currentTurtle].Create();
@@ -351,7 +277,7 @@ public class MainGame : MonoBehaviour
 
                     if (turtle.transform.localPosition.y >= 0)
                     {
-                        turtle.transform.localPosition = new Vector3(0, 0, 150);
+                        turtle.transform.localPosition = new Vector3(0, 0, 300);
                         gameObject.transform.parent.Find("Smile").gameObject.SetActive(false);
                         for (int emoji = 0; emoji < 4; emoji++)
                         {

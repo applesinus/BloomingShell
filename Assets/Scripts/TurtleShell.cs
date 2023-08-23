@@ -31,7 +31,7 @@ public class TurtleShell : MonoBehaviour
             GameObject plantedFlower = Instantiate(FlowerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             plantedFlower.transform.SetParent(gameObject.transform);
             plantedFlower.transform.localScale = new Vector3(1, 1, 1);
-            plantedFlower.transform.localPosition = new Vector3(0, 0, -200);
+            plantedFlower.transform.localPosition = new Vector3(0, 0, -220);
             plantedFlower.transform.name = "Flower";
             Flower = plantedFlower;
             // changing sprite
