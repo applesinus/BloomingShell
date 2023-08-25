@@ -75,6 +75,7 @@ public class MainGame : MonoBehaviour
     float timer = 0f;
     float standingByTimer = 0f;
     private Vector3 startPosition;
+    private Quaternion headPos, tailPos;
 
 
     void turtleMove()
@@ -122,13 +123,15 @@ public class MainGame : MonoBehaviour
         {
             if (localTimer < 10f)
             {
-                Debug.Log(1);
-                turtleparts["h"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(-10f, Vector3.forward), Quaternion.AngleAxis(10f, Vector3.forward), localTimer / 10f);
+                turtleparts["h"].transform.localRotation = Quaternion.Lerp(headPos, Quaternion.AngleAxis(10f, Vector3.forward), easingFunction((localTimer - 5) % 10));
             }
             else if (localTimer < 15f)
             {
-                Debug.Log(2);
-                turtleparts["t"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(10f, Vector3.forward), Quaternion.AngleAxis(0, Vector3.forward), standingByTimer / 2);
+                turtleparts["h"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(10f, Vector3.forward), Quaternion.AngleAxis(-10f, Vector3.forward), easingFunction((localTimer - 10) % 15));
+            }
+            else if (localTimer < 20f)
+            {
+                headPos = turtleparts["h"].transform.rotation;
             }
         }
     }
@@ -240,11 +243,13 @@ public class MainGame : MonoBehaviour
         switch(mode)
         {
             case 0:
-                if (turtle != null)
                 {
-                    turtleStandingByAnimation();
+                    if (turtle != null)
+                    {
+                        turtleStandingByAnimation();
+                    }
+                    break;
                 }
-                break;
 
             // going away and destroy
             // then creating turtle
@@ -284,6 +289,7 @@ public class MainGame : MonoBehaviour
                             gameObject.transform.parent.Find("Smile").Find("smile" + emoji.ToString()).gameObject.SetActive(false);
                         }
                         mode = 0;
+                        headPos = turtle.transform.Find("Sprites").Find("Thead").rotation;
                     }
                     break;
                 }
@@ -316,7 +322,7 @@ public class MainGame : MonoBehaviour
 
                         int tasksdone = 0; // count of done tasks
                         int smile = 0;
-                        // 0 - vary sad (nothing's done)
+                        // 0 - very sad (nothing's done)
                         // 1 - sad (if less than half tasks are done AND color isn't done)
                         // 2 - neutral (if more/exactly half tasks are done OR color is done)
                         // 3 - happy (if all tasks are done AND color is done)
@@ -389,8 +395,6 @@ public class MainGame : MonoBehaviour
                             }
                         }
 
-
-                        Debug.Log(smile);
 
                         gameObject.transform.parent.Find("Smile").gameObject.SetActive(true);
                         gameObject.transform.parent.Find("Smile").Find("smile" + smile.ToString()).gameObject.SetActive(true);

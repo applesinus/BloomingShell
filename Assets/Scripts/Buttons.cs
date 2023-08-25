@@ -302,9 +302,7 @@ public class Buttons : MonoBehaviour
             // Menu PlayButton
             case ("PlayButton"):
                 {
-                    PlayerPrefs.SetInt("color", 0);
-                    
-                    SceneManager.LoadScene("Game");
+                    SceneManager.LoadScene("Levels");
                     break;
                 }
 
