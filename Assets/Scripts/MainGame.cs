@@ -212,8 +212,8 @@ public class MainGame : MonoBehaviour
         };
 
         // initialazing counters
-        currentTurtle = 0;
-        currentLevel = 0;
+        currentLevel = PlayerPrefs.GetInt("AwakeLevel");
+        currentTurtle = PlayerPrefs.GetInt("AwakeTurtle");
 
 
         // This is a database of all levels and turtles

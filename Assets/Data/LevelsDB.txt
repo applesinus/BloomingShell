@@ -25,7 +25,51 @@
           ]
         },
         {
-          "eyes": [ 0, 0, 0, 255 ],
+          "eyes": [ 255, 0, 0, 255 ],
+          "turtle": 9,
+          "tasks": [
+            {
+              "mode": 1,
+              "flowers": [ 1, 1 ],
+              "description": [
+                "This is a standart description, if you see this, something's going wrong :(",
+                "Это стандартное описание, если ты его видишь, что-то пошло не по плану :("
+              ]
+            },
+            {
+              "mode": 1,
+              "flowers": [ 1, 1 ],
+              "description": [
+                "This is a standart description, if you see this, something's going wrong :(",
+                "Это стандартное описание, если ты его видишь, что-то пошло не по плану :("
+              ]
+            }
+          ]
+        },
+        {
+          "eyes": [ 0, 255, 0, 255 ],
+          "turtle": 9,
+          "tasks": [
+            {
+              "mode": 1,
+              "flowers": [ 1, 1 ],
+              "description": [
+                "This is a standart description, if you see this, something's going wrong :(",
+                "Это стандартное описание, если ты его видишь, что-то пошло не по плану :("
+              ]
+            },
+            {
+              "mode": 1,
+              "flowers": [ 1, 1 ],
+              "description": [
+                "This is a standart description, if you see this, something's going wrong :(",
+                "Это стандартное описание, если ты его видишь, что-то пошло не по плану :("
+              ]
+            }
+          ]
+        },
+        {
+          "eyes": [ 0, 0, 255, 255 ],
           "turtle": 9,
           "tasks": [
             {

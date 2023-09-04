@@ -9,7 +9,7 @@ public class LevelNumber : MonoBehaviour
 
     private void Start()
     {
-        gameObject.transform.Find("Number").gameObject.GetComponent<Text>().text = gameObject.name.Substring(11);
+        gameObject.transform.Find("Number").gameObject.GetComponent<Text>().text = gameObject.name[11..];
     }
 
     private void OnMouseDown()
@@ -25,6 +25,8 @@ public class LevelNumber : MonoBehaviour
     private void OnMouseUpAsButton()
     {
         PlayerPrefs.SetInt("color", 0);
+        PlayerPrefs.SetInt("AwakeLevel", 0);
+        PlayerPrefs.SetInt("AwakeTurtle", System.Int32.Parse(gameObject.name[11..])-1);
 
         SceneManager.LoadScene("Game");
     }
