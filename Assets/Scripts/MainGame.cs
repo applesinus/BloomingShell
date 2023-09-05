@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class MainGame : MonoBehaviour
 {
@@ -76,6 +77,9 @@ public class MainGame : MonoBehaviour
     float standingByTimer = 0f;
     private Vector3 startPosition;
     private Quaternion headPos, tailPos;
+
+    int[][] scores;
+    string[] allscores;
 
 
     void turtleMove()
@@ -210,6 +214,19 @@ public class MainGame : MonoBehaviour
             {0, 0, 255}, // 7 flower is blue
             {0, 0, 0}, // blank color
         };
+
+        if (!PlayerPrefs.HasKey("Scores"))
+        {
+            PlayerPrefs.SetString("Scores", "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0");
+        }
+
+        allscores = PlayerPrefs.GetString("Scores").Split(',').ToArray();
+        scores = new int[allscores.Length][];
+        for (int i = 0; i < allscores.Length; i++)
+        {
+            scores[i] = allscores[i].Split(' ').Select(int.Parse).ToArray();
+        }
+        
 
         // initialazing counters
         currentLevel = PlayerPrefs.GetInt("AwakeLevel");
@@ -358,7 +375,7 @@ public class MainGame : MonoBehaviour
                                 }
                             }
                         }
-                        
+
                         for (int i = 0; i < tasksCount; i++)
                         {
                             if (done[i] == 1) tasksdone++;
@@ -366,11 +383,11 @@ public class MainGame : MonoBehaviour
 
                         
                         if (
-                            (red * 255 - EyesToColor(plot.levels[currentLevel].turtles[currentTurtle].eyes).r > -0.01f && red * 255 - EyesToColor(plot.levels[currentLevel].turtles[currentTurtle].eyes).r < 0.01f)
+                            (red - EyesToColor(plot.levels[currentLevel].turtles[currentTurtle].eyes).r > -0.01f && red - EyesToColor(plot.levels[currentLevel].turtles[currentTurtle].eyes).r < 0.01f)
                             &&
-                            (green * 255 - EyesToColor(plot.levels[currentLevel].turtles[currentTurtle].eyes).g > -0.01f && green * 255 - EyesToColor(plot.levels[currentLevel].turtles[currentTurtle].eyes).g < 0.01f)
+                            (green - EyesToColor(plot.levels[currentLevel].turtles[currentTurtle].eyes).g > -0.01f && green - EyesToColor(plot.levels[currentLevel].turtles[currentTurtle].eyes).g < 0.01f)
                             &&
-                            (blue * 255 - EyesToColor(plot.levels[currentLevel].turtles[currentTurtle].eyes).b > -0.01f && blue * 255 - EyesToColor(plot.levels[currentLevel].turtles[currentTurtle].eyes).b < 0.01f)
+                            (blue - EyesToColor(plot.levels[currentLevel].turtles[currentTurtle].eyes).b > -0.01f && blue - EyesToColor(plot.levels[currentLevel].turtles[currentTurtle].eyes).b < 0.01f)
                             )
                         {
 
@@ -395,6 +412,12 @@ public class MainGame : MonoBehaviour
                             }
                         }
 
+                        scores[currentLevel][currentTurtle] = smile;
+
+                        allscores[currentLevel] = string.Join(" ", scores[currentLevel]);
+                        PlayerPrefs.SetString("Scores", string.Join(",", allscores));
+
+                        Debug.Log(PlayerPrefs.GetString("Scores"));
 
                         gameObject.transform.parent.Find("Smile").gameObject.SetActive(true);
                         gameObject.transform.parent.Find("Smile").Find("smile" + smile.ToString()).gameObject.SetActive(true);
