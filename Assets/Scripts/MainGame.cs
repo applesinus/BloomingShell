@@ -89,6 +89,7 @@ public class MainGame : MonoBehaviour
 
     void turtleAnimation()
     {
+        Debug.Log("Anim");
         timer += Time.deltaTime;
         if (timer >= 1f)
         {
@@ -120,6 +121,7 @@ public class MainGame : MonoBehaviour
 
     void turtleStandingByAnimation()
     {
+        Debug.Log("Wait");
         standingByTimer += Time.deltaTime;
         float localTimer = standingByTimer % 60f;
 
@@ -127,21 +129,42 @@ public class MainGame : MonoBehaviour
         {
             if (localTimer < 10f)
             {
-                turtleparts["h"].transform.localRotation = Quaternion.Lerp(headPos, Quaternion.AngleAxis(10f, Vector3.forward), easingFunction((localTimer - 5) % 10));
+                turtleparts["h"].transform.localRotation = Quaternion.Lerp(headPos, Quaternion.AngleAxis(10f, Vector3.forward), easingFunction((localTimer - 5) / 5));
             }
             else if (localTimer < 15f)
             {
-                turtleparts["h"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(10f, Vector3.forward), Quaternion.AngleAxis(-10f, Vector3.forward), easingFunction((localTimer - 10) % 15));
+                turtleparts["h"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(10f, Vector3.forward), Quaternion.AngleAxis(-2f, Vector3.forward), easingFunction((localTimer - 10) / 5));
             }
             else if (localTimer < 20f)
             {
                 headPos = turtleparts["h"].transform.rotation;
             }
         }
+
+        // TOFIX
+        if (localTimer > 30f)
+        {
+            if (localTimer < 35f)
+            {
+                Debug.Log("Waiving forward");
+                turtleparts["t"].transform.localRotation = Quaternion.Lerp(tailPos, Quaternion.AngleAxis(10f, Vector3.forward), easingFunction((localTimer - 30) / 5));
+            }
+            else if (localTimer < 40f)
+            {
+                Debug.Log("Waiving back");
+                turtleparts["t"].transform.localRotation = Quaternion.Lerp(Quaternion.AngleAxis(10f, Vector3.forward), Quaternion.AngleAxis(-10f, Vector3.forward), easingFunction((localTimer - 35) / 5));
+            }
+            else if (localTimer < 50f)
+            {
+                Debug.Log("Tail IDLE");
+                tailPos = turtleparts["t"].transform.rotation;
+            }
+        }
     }
 
     float easingFunction(float x)
     {
+        Debug.Log(x < 0.5 ? 4 * x * x * x : 1 - Mathf.Pow(-2 * x + 2, 3) / 2);
         return x < 0.5 ? 4 * x * x * x : 1 - Mathf.Pow(-2 * x + 2, 3) / 2;
     }
 
@@ -307,6 +330,7 @@ public class MainGame : MonoBehaviour
                         }
                         mode = 0;
                         headPos = turtle.transform.Find("Sprites").Find("Thead").rotation;
+                        tailPos = turtle.transform.Find("Sprites").Find("Ttail").rotation;
                     }
                     break;
                 }
